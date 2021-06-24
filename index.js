@@ -10,7 +10,8 @@ app.get('/api/courses', (req, res) => {
 });
 
 app.get('/api/courses/:year/:month', (req, res) => {
-    res.send(req.params.year);
+    //res.send(req.params.year);
+    res.send(req.query);
 });
 
 const port = process.env.PORT || 3000;
