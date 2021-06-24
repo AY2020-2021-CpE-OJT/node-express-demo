@@ -1,6 +1,5 @@
 const Joie = require('joi');
 const express = require('express');
-const Joi = require('joi');
 const app = express();
 
 app.use(express.json());
@@ -65,6 +64,16 @@ function validateCourse(course) {
 
     return schema.validate(course);
 }
+
+app.delete('/api/courses/:id', (req, res) => {
+    const course = courses.find(c => c.id === parseInt(req.params.id));
+    if (!course) res.status(404).send('ID not found');
+
+    const index = courses.indexOf(course);
+    courses.splice(index, 1);
+
+    res.send(course);
+});
 
 
 app.get('/api/courses/:id', (req, res) => {
