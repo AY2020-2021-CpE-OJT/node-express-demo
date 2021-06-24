@@ -1,5 +1,6 @@
 const Joie = require('joi');
 const express = require('express');
+const Joi = require('joi');
 const app = express();
 
 app.use(express.json());
@@ -22,18 +23,11 @@ app.post('/api/courses', (req, res) => {
     // if (!req.body.name || req.body.name.length < 3) {
     //      res.status(400).send('Name is Required and at least 3 Char');
     // }
-    const schema = Joie.object({
-        name: Joie.string().min(3).required()
-    });
-
-    const result = schema.validate(req.body);
-    //console.log(result);
-
+    const result = validateCourse(req.body);
     if (result.error) {
-        res.status(400).send(result.error.details[0].message);
+        res.status(400).send(result.error.details[0].schema);
         return;
     }
-
 
     const course = {
         id: courses.length + 1,
@@ -43,6 +37,34 @@ app.post('/api/courses', (req, res) => {
     res.send(course);
 
 });
+
+app.put('/api/courses/:id', (req, res) => {
+    // Check if course exists
+    // Return 404 if not
+    const course = courses.find(c => c.id === parseInt(req.params.id));
+    if (!course) res.status(404).send('ID not found');
+
+    // Validate
+    // Return 400 if not
+    const result = validateCourse(req.body);
+    if (result.error) {
+        res.status(400).send(result.error.details[0].message);
+        return;
+    }
+
+    //Update Course
+    // Return the Update course
+    course.name = req.body.name;
+    res.send(course);
+});
+
+function validateCourse(course) {
+    const schema = Joie.object({
+        name: Joie.string().min(3).required()
+    });
+
+    return schema.validate(course);
+}
 
 
 app.get('/api/courses/:id', (req, res) => {
