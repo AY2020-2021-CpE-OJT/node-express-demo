@@ -9,6 +9,10 @@ app.get('/api/courses', (req, res) => {
     res.send([1, 2, 3]);
 });
 
-const port = process.env.port || 3000;
+app.get('/api/courses/:year/:month', (req, res) => {
+    res.send(req.params.year);
+});
+
+const port = process.env.PORT || 3000;
 
 app.listen(port, () => console.log(`Listening on port ${port}...`));
